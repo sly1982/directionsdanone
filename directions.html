@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centrale Danone - Code Secret</title>
+    <style>
+        body {
+            background: black;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            overflow: hidden;
+            position: relative;
+        }
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        h1 {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        #instructions {
+            margin: 20px 0;
+            font-size: 18px;
+        }
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        button {
+            background: gray;
+            color: white;
+            border: none;
+            padding: 15px;
+            font-size: 20px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background: white;
+            color: black;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="matrixCanvas"></canvas>
+    <h1>CENTRALE DANONE</h1>
+    <p id="instructions">Veuillez insérer le code secret pour passer à l'étape supérieure.</p>
+    
+    <div class="buttons">
+        <button onclick="addInput('haut')">⬆️</button>
+    </div>
+    <div class="buttons">
+        <button onclick="addInput('gauche')">⬅️</button>
+        <button onclick="addInput('bas')">⬇️</button>
+        <button onclick="addInput('droite')">➡️</button>
+    </div>
+    <p id="result"></p>
+    <button onclick="resetInput()">Réessayer</button>
+    
+    <script>
+        const correctCode = ['haut', 'bas', 'droite', 'gauche'];
+        let userInput = [];
+
+        function addInput(direction) {
+            userInput.push(direction);
+            if (userInput.length === correctCode.length) {
+                checkCode();
+            }
+        }
+
+        function checkCode() {
+            if (JSON.stringify(userInput) === JSON.stringify(correctCode)) {
+                document.getElementById('result').innerHTML = '<span style="color: green;">CORRECT</span>';
+            } else {
+                document.getElementById('result').innerHTML = '<span style="color: red;">INCORRECT</span>';
+            }
+        }
+
+        function resetInput() {
+            userInput = [];
+            document.getElementById('result').innerHTML = '';
+        }
+
+        // Matrix Effect
+        const canvas = document.getElementById('matrixCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        const fontSize = 16;
+        const columns = canvas.width / fontSize;
+        const drops = Array(Math.floor(columns)).fill(0);
+        
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.font = fontSize + 'px monospace';
+            for (let i = 0; i < drops.length; i++) {
+                const text = letters.charAt(Math.floor(Math.random() * letters.length));
+                ctx.fillStyle = Math.random() > 0.5 ? 'red' : 'blue';
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+        setInterval(drawMatrix, 50);
+    </script>
+</body>
+</html>
